@@ -13,3 +13,17 @@ datasource db {
   provider = "mysql"
   url      = env("DATABASE_URL")
 }
+
+model Fornecedor {
+  id               Int      @id @default(autoincrement())
+  nomeEmpresa      String   @map("nome_empresa") @db.VarChar(150)
+  cnpj             String   @unique @db.VarChar(14)
+  endereco         String   @db.VarChar(255)
+  telefone         String   @db.VarChar(11)
+  email            String   @db.VarChar(150)
+  contatoPrincipal String   @map("contato_principal") @db.VarChar(150)
+  createdAt        DateTime @default(now()) @map("created_at")
+  updatedAt        DateTime @updatedAt @map("updated_at")
+
+  @@map("fornecedores")
+}
