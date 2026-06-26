@@ -1,0 +1,8 @@
+-- AlterTable
+ALTER TABLE `fornecedores` DROP COLUMN `endereco`,
+    ADD COLUMN `bairro` VARCHAR(100) NOT NULL,
+    ADD COLUMN `cep` VARCHAR(8) NOT NULL,
+    ADD COLUMN `cidade` VARCHAR(100) NOT NULL,
+    ADD COLUMN `logradouro` VARCHAR(150) NOT NULL,
+    ADD COLUMN `numero` VARCHAR(10) NOT NULL,
+    ADD COLUMN `uf` VARCHAR(2) NOT NULL;

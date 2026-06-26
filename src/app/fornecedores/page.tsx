@@ -30,6 +30,7 @@ export default async function FornecedoresPage() {
             <thead className="bg-gray-50 text-xs uppercase text-gray-500">
               <tr>
                 <th className="px-4 py-3">Empresa</th>
+                <th className="px-4 py-3">Cidade/UF</th>
                 <th className="px-4 py-3">CNPJ</th>
                 <th className="px-4 py-3">Telefone</th>
                 <th className="px-4 py-3">E-mail</th>
@@ -40,6 +41,9 @@ export default async function FornecedoresPage() {
               {fornecedores.map((fornecedor) => (
                 <tr key={fornecedor.id}>
                   <td className="px-4 py-3 font-medium text-gray-900">{fornecedor.nomeEmpresa}</td>
+                  <td className="px-4 py-3 text-gray-600">
+                    {fornecedor.cidade}/{fornecedor.uf}
+                  </td>
                   <td className="px-4 py-3 text-gray-600">{formatCnpj(fornecedor.cnpj)}</td>
                   <td className="px-4 py-3 text-gray-600">{formatPhone(fornecedor.telefone)}</td>
                   <td className="px-4 py-3 text-gray-600">{fornecedor.email}</td>

@@ -5,8 +5,10 @@ import { useRouter } from 'next/navigation';
 import { Controller, useForm } from 'react-hook-form';
 import { toast } from 'sonner';
 
+import { UF_OPTIONS } from '@/constants/uf';
 import { fornecedorSchema, type FornecedorFormValues } from '@/lib/validations';
 import type { Fornecedor } from '@/types/fornecedor';
+import { formatCep } from '@/utils/cep';
 import { formatCnpj } from '@/utils/cnpj';
 import { formatPhone } from '@/utils/phone';
 
@@ -39,7 +41,12 @@ export function FornecedorForm({ fornecedor }: FornecedorFormProps) {
       ? {
           nomeEmpresa: fornecedor.nomeEmpresa,
           cnpj: fornecedor.cnpj,
-          endereco: fornecedor.endereco,
+          logradouro: fornecedor.logradouro,
+          numero: fornecedor.numero,
+          bairro: fornecedor.bairro,
+          cidade: fornecedor.cidade,
+          uf: fornecedor.uf,
+          cep: fornecedor.cep,
           telefone: fornecedor.telefone,
           email: fornecedor.email,
           contatoPrincipal: fornecedor.contatoPrincipal,
@@ -121,19 +128,115 @@ export function FornecedorForm({ fornecedor }: FornecedorFormProps) {
       </div>
 
       <div>
-        <label htmlFor="endereco" className="mb-1 block text-sm font-medium">
+        <label htmlFor="cep" className="mb-1 block text-sm font-medium">
+          CEP
+        </label>
+        <Controller
+          name="cep"
+          control={control}
+          render={({ field }) => (
+            <input
+              id="cep"
+              className={inputClassName}
+              placeholder="00000-000"
+              aria-invalid={!!errors.cep}
+              value={formatCep(field.value ?? '')}
+              onChange={(event) => field.onChange(event.target.value)}
+            />
+          )}
+        />
+        {errors.cep && <p className="mt-1 text-sm text-red-600">{errors.cep.message}</p>}
+      </div>
+
+      <div>
+        <label htmlFor="logradouro" className="mb-1 block text-sm font-medium">
           Endereço
         </label>
-        <textarea
-          id="endereco"
+        <input
+          id="logradouro"
           className={inputClassName}
-          placeholder="Insira o endereço completo da empresa"
-          aria-invalid={!!errors.endereco}
-          {...register('endereco')}
+          placeholder="Rua, Avenida..."
+          aria-invalid={!!errors.logradouro}
+          {...register('logradouro')}
         />
-        {errors.endereco && (
-          <p className="mt-1 text-sm text-red-600">{errors.endereco.message}</p>
+        {errors.logradouro && (
+          <p className="mt-1 text-sm text-red-600">{errors.logradouro.message}</p>
         )}
+      </div>
+
+      <div className="grid grid-cols-2 gap-4">
+        <div>
+          <label htmlFor="numero" className="mb-1 block text-sm font-medium">
+            Número
+          </label>
+          <input
+            id="numero"
+            className={inputClassName}
+            placeholder="Número"
+            aria-invalid={!!errors.numero}
+            {...register('numero')}
+          />
+          {errors.numero && (
+            <p className="mt-1 text-sm text-red-600">{errors.numero.message}</p>
+          )}
+        </div>
+
+        <div>
+          <label htmlFor="bairro" className="mb-1 block text-sm font-medium">
+            Bairro
+          </label>
+          <input
+            id="bairro"
+            className={inputClassName}
+            placeholder="Bairro"
+            aria-invalid={!!errors.bairro}
+            {...register('bairro')}
+          />
+          {errors.bairro && (
+            <p className="mt-1 text-sm text-red-600">{errors.bairro.message}</p>
+          )}
+        </div>
+      </div>
+
+      <div className="grid grid-cols-2 gap-4">
+        <div>
+          <label htmlFor="cidade" className="mb-1 block text-sm font-medium">
+            Cidade
+          </label>
+          <input
+            id="cidade"
+            className={inputClassName}
+            placeholder="Cidade"
+            aria-invalid={!!errors.cidade}
+            {...register('cidade')}
+          />
+          {errors.cidade && (
+            <p className="mt-1 text-sm text-red-600">{errors.cidade.message}</p>
+          )}
+        </div>
+
+        <div>
+          <label htmlFor="uf" className="mb-1 block text-sm font-medium">
+            UF
+          </label>
+          <select
+            id="uf"
+            className={inputClassName}
+            aria-invalid={!!errors.uf}
+            defaultValue=""
+            {...register('uf')}
+          >
+            <option value="" disabled>
+              Selecione...
+            </option>
+            {UF_OPTIONS.map((uf) => (
+              <option key={uf.value} value={uf.value}>
+                {uf.label}
+              </option>
+            ))}
+          </select>
+          {errors.uf && <p className="mt-1 text-sm text-red-600">{errors.uf.message}</p>}
+        </div>
       </div>
 
       <div>

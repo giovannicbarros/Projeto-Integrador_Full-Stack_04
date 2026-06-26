@@ -1,5 +1,7 @@
 import { z } from 'zod';
 
+import { UF_VALUES } from '@/constants/uf';
+import { unformatCep } from '@/utils/cep';
 import { isValidCnpj, unformatCnpj } from '@/utils/cnpj';
 import { unformatPhone } from '@/utils/phone';
 
@@ -11,7 +13,16 @@ export const fornecedorSchema = z.object({
     .transform(unformatCnpj)
     .refine((value) => value.length === 14, 'CNPJ deve conter 14 dígitos.')
     .refine(isValidCnpj, 'CNPJ inválido.'),
-  endereco: z.string().trim().min(1, 'Endereço é obrigatório.').max(255),
+  logradouro: z.string().trim().min(1, 'Endereço é obrigatório.').max(150),
+  numero: z.string().trim().min(1, 'Número é obrigatório.').max(10),
+  bairro: z.string().trim().min(1, 'Bairro é obrigatório.').max(100),
+  cidade: z.string().trim().min(1, 'Cidade é obrigatória.').max(100),
+  uf: z.enum(UF_VALUES, { message: 'UF inválida.' }),
+  cep: z
+    .string()
+    .min(1, 'CEP é obrigatório.')
+    .transform(unformatCep)
+    .refine((value) => value.length === 8, 'CEP deve conter 8 dígitos.'),
   telefone: z
     .string()
     .min(1, 'Telefone é obrigatório.')

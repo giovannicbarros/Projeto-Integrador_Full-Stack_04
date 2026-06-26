@@ -4,7 +4,7 @@ const FIRST_DIGIT_WEIGHTS = [5, 4, 3, 2, 9, 8, 7, 6, 5, 4, 3, 2];
 const SECOND_DIGIT_WEIGHTS = [6, 5, 4, 3, 2, 9, 8, 7, 6, 5, 4, 3, 2];
 
 export function unformatCnpj(value: string): string {
-  return value.replace(/\D/g, '');
+  return value.replace(/\D/g, '').slice(0, CNPJ_LENGTH);
 }
 
 export function formatCnpj(value: string): string {
