@@ -23,12 +23,13 @@ Permitir que o gerente de compras cadastre, liste, edite e exclua fornecedores n
 ### Cadastro (Create)
 
 1. O usuário acessa a página `/fornecedores/novo`, que exibe o formulário de cadastro.
-2. Ao digitar, os campos de CNPJ, telefone e CEP são formatados automaticamente (máscara), a UF é selecionada a partir de um combo com as 27 unidades federativas, e o formulário valida os dados em tempo real no navegador (`react-hook-form` + `zod`).
-3. Ao clicar em "Cadastrar", os dados são enviados via `POST` para a API `/api/fornecedores`.
-4. A API revalida os dados recebidos com o mesmo schema Zod usado no formulário (defesa em profundidade contra chamadas diretas à API).
-5. O `service` (`fornecedor.service.ts`) verifica se já existe um fornecedor com o mesmo CNPJ; caso exista, a operação é interrompida e o erro de duplicidade é retornado.
-6. Caso os dados sejam válidos e o CNPJ seja inédito, o `repository` (`fornecedor.repository.ts`) persiste o novo fornecedor no banco de dados via Prisma.
-7. A API responde com sucesso (`201`) ou com o erro correspondente (`400` para dados inválidos, `409` para CNPJ duplicado, `500` para erros inesperados), e a interface exibe a mensagem apropriada (toast de sucesso/erro ou erro inline no campo).
+2. Ao digitar, os campos de CNPJ, telefone e CEP são formatados automaticamente (máscara), a UF é selecionada a partir de um combo com as 27 unidades federativas, e o formulário valida cada campo ao perder o foco (`onBlur`, via `react-hook-form` + `zod`), sem precisar esperar o envio do formulário para mostrar o erro.
+3. Ao clicar em "Cadastrar" com algum campo inválido ou vazio, além das mensagens inline em cada campo, é exibido um toast de informação ("Verifique os campos destacados em vermelho.") orientando o usuário a corrigir os dados.
+4. Ao clicar em "Cadastrar" com todos os dados válidos, eles são enviados via `POST` para a API `/api/fornecedores`.
+5. A API revalida os dados recebidos com o mesmo schema Zod usado no formulário (defesa em profundidade contra chamadas diretas à API).
+6. O `service` (`fornecedor.service.ts`) verifica se já existe um fornecedor com o mesmo CNPJ; caso exista, a operação é interrompida e o erro de duplicidade é retornado.
+7. Caso os dados sejam válidos e o CNPJ seja inédito, o `repository` (`fornecedor.repository.ts`) persiste o novo fornecedor no banco de dados via Prisma.
+8. A API responde com sucesso (`201`) ou com o erro correspondente (`400` para dados inválidos, `409` para CNPJ duplicado, `500` para erros inesperados), e a interface exibe a mensagem apropriada (toast de sucesso/erro ou erro inline no campo).
 
 ### Listagem (Read)
 

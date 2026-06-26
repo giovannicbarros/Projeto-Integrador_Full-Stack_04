@@ -37,6 +37,7 @@ export function FornecedorForm({ fornecedor }: FornecedorFormProps) {
     formState: { errors, isSubmitting },
   } = useForm<FornecedorFormValues>({
     resolver: zodResolver(fornecedorSchema),
+    mode: 'onBlur',
     defaultValues: fornecedor
       ? {
           nomeEmpresa: fornecedor.nomeEmpresa,
@@ -83,13 +84,20 @@ export function FornecedorForm({ fornecedor }: FornecedorFormProps) {
       router.push('/fornecedores');
       router.refresh();
     } else {
-      toast.success('Fornecedor cadastrado com sucesso!');
+      toast.success('Fornecedor cadastrado com sucesso!', {
+        onAutoClose: () => router.push('/fornecedores'),
+      });
       reset();
     }
   }
 
   return (
-    <form onSubmit={handleSubmit(onSubmit)} className="flex flex-col gap-4">
+    <form
+      onSubmit={handleSubmit(onSubmit, () => {
+        toast.info('Verifique os campos destacados em vermelho.');
+      })}
+      className="flex flex-col gap-4"
+    >
       <div>
         <label htmlFor="nomeEmpresa" className="mb-1 block text-sm font-medium">
           Nome da Empresa
@@ -113,6 +121,7 @@ export function FornecedorForm({ fornecedor }: FornecedorFormProps) {
         <Controller
           name="cnpj"
           control={control}
+          defaultValue=""
           render={({ field }) => (
             <input
               id="cnpj"
@@ -121,6 +130,8 @@ export function FornecedorForm({ fornecedor }: FornecedorFormProps) {
               aria-invalid={!!errors.cnpj}
               value={formatCnpj(field.value ?? '')}
               onChange={(event) => field.onChange(event.target.value)}
+              onBlur={field.onBlur}
+              ref={field.ref}
             />
           )}
         />
@@ -134,6 +145,7 @@ export function FornecedorForm({ fornecedor }: FornecedorFormProps) {
         <Controller
           name="cep"
           control={control}
+          defaultValue=""
           render={({ field }) => (
             <input
               id="cep"
@@ -142,6 +154,8 @@ export function FornecedorForm({ fornecedor }: FornecedorFormProps) {
               aria-invalid={!!errors.cep}
               value={formatCep(field.value ?? '')}
               onChange={(event) => field.onChange(event.target.value)}
+              onBlur={field.onBlur}
+              ref={field.ref}
             />
           )}
         />
@@ -246,6 +260,7 @@ export function FornecedorForm({ fornecedor }: FornecedorFormProps) {
         <Controller
           name="telefone"
           control={control}
+          defaultValue=""
           render={({ field }) => (
             <input
               id="telefone"
@@ -254,6 +269,8 @@ export function FornecedorForm({ fornecedor }: FornecedorFormProps) {
               aria-invalid={!!errors.telefone}
               value={formatPhone(field.value ?? '')}
               onChange={(event) => field.onChange(event.target.value)}
+              onBlur={field.onBlur}
+              ref={field.ref}
             />
           )}
         />
