@@ -13,6 +13,9 @@ export function Navbar() {
         <Link href="/fornecedores" className="transition-colors hover:text-gray-900">
           Fornecedores
         </Link>
+        <Link href="/produtos" className="transition-colors hover:text-gray-900">
+          Produtos
+        </Link>
       </div>
     </nav>
   );

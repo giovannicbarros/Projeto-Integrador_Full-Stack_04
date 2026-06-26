@@ -32,3 +32,18 @@ model Fornecedor {
 
   @@map("fornecedores")
 }
+
+model Produto {
+  id                Int       @id @default(autoincrement())
+  nome              String    @db.VarChar(150)
+  codigoBarras      String?   @unique @map("codigo_barras") @db.VarChar(20)
+  descricao         String    @db.Text
+  quantidadeEstoque Int       @default(0) @map("quantidade_estoque")
+  categoria         String    @db.VarChar(100)
+  dataValidade      DateTime? @map("data_validade")
+  imagemBase64      String?   @map("imagem_base64") @db.LongText
+  createdAt         DateTime  @default(now()) @map("created_at")
+  updatedAt         DateTime  @updatedAt @map("updated_at")
+
+  @@map("produtos")
+}
