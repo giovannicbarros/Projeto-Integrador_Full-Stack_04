@@ -1,3 +1,4 @@
+import { Pencil } from 'lucide-react';
 import Link from 'next/link';
 
 import { FornecedorDeleteButton } from '@/components/fornecedor-delete-button';
@@ -51,9 +52,11 @@ export default async function FornecedoresPage() {
                     <div className="flex justify-end gap-3">
                       <Link
                         href={`/fornecedores/${fornecedor.id}/editar`}
+                        aria-label="Editar"
+                        title="Editar"
                         className="text-gray-600 transition-colors hover:text-gray-900"
                       >
-                        Editar
+                        <Pencil className="h-4 w-4" />
                       </Link>
                       <FornecedorDeleteButton
                         id={fornecedor.id}

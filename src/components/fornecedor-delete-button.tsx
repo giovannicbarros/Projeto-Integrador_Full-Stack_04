@@ -1,8 +1,11 @@
 'use client';
 
+import { Trash2 } from 'lucide-react';
 import { useRouter } from 'next/navigation';
 import { useState } from 'react';
 import { toast } from 'sonner';
+
+import { ConfirmDialog } from '@/components/confirm-dialog';
 
 interface ApiResponse {
   success: boolean;
@@ -16,23 +19,17 @@ interface FornecedorDeleteButtonProps {
 
 export function FornecedorDeleteButton({ id, nomeEmpresa }: FornecedorDeleteButtonProps) {
   const router = useRouter();
+  const [isModalOpen, setIsModalOpen] = useState(false);
   const [isDeleting, setIsDeleting] = useState(false);
 
   async function handleDelete(): Promise<void> {
-    const confirmado = window.confirm(
-      `Tem certeza que deseja excluir o fornecedor "${nomeEmpresa}"?`,
-    );
-
-    if (!confirmado) {
-      return;
-    }
-
     setIsDeleting(true);
 
     const response = await fetch(`/api/fornecedores/${id}`, { method: 'DELETE' });
     const result: ApiResponse = await response.json();
 
     setIsDeleting(false);
+    setIsModalOpen(false);
 
     if (!result.success) {
       toast.error(result.error ?? 'Erro ao excluir fornecedor.');
@@ -44,13 +41,26 @@ export function FornecedorDeleteButton({ id, nomeEmpresa }: FornecedorDeleteButt
   }
 
   return (
-    <button
-      type="button"
-      onClick={handleDelete}
-      disabled={isDeleting}
-      className="text-red-600 transition-colors hover:text-red-700 disabled:opacity-50"
-    >
-      Excluir
-    </button>
+    <>
+      <button
+        type="button"
+        onClick={() => setIsModalOpen(true)}
+        aria-label="Excluir"
+        title="Excluir"
+        className="text-red-600 transition-colors hover:text-red-700"
+      >
+        <Trash2 className="h-4 w-4" />
+      </button>
+
+      <ConfirmDialog
+        open={isModalOpen}
+        title="Excluir fornecedor"
+        description={`Tem certeza que deseja excluir o fornecedor "${nomeEmpresa}"? Esta ação não pode ser desfeita.`}
+        confirmLabel="Excluir"
+        isConfirming={isDeleting}
+        onConfirm={handleDelete}
+        onCancel={() => setIsModalOpen(false)}
+      />
+    </>
   );
 }
