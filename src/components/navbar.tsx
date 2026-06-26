@@ -10,8 +10,8 @@ export function Navbar() {
         <Link href="/" className="transition-colors hover:text-gray-900">
           Início
         </Link>
-        <Link href="/fornecedores/novo" className="transition-colors hover:text-gray-900">
-          Cadastro de Fornecedor
+        <Link href="/fornecedores" className="transition-colors hover:text-gray-900">
+          Fornecedores
         </Link>
       </div>
     </nav>

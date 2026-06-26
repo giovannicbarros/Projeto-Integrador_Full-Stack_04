@@ -1,7 +1,22 @@
 import { NextResponse } from 'next/server';
 
 import { fornecedorSchema } from '@/lib/validations';
-import { cadastrarFornecedor, CnpjDuplicadoError } from '@/services/fornecedor.service';
+import { cadastrarFornecedor, CnpjDuplicadoError, listarFornecedores } from '@/services/fornecedor.service';
+
+export async function GET(): Promise<NextResponse> {
+  try {
+    const fornecedores = await listarFornecedores();
+
+    return NextResponse.json({ success: true, data: fornecedores });
+  } catch (error) {
+    console.error('[GET /api/fornecedores]', error);
+
+    return NextResponse.json(
+      { success: false, error: 'Erro interno ao listar fornecedores.' },
+      { status: 500 },
+    );
+  }
+}
 
 export async function POST(request: Request): Promise<NextResponse> {
   try {

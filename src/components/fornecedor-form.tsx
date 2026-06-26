@@ -1,10 +1,12 @@
 'use client';
 
 import { zodResolver } from '@hookform/resolvers/zod';
+import { useRouter } from 'next/navigation';
 import { Controller, useForm } from 'react-hook-form';
 import { toast } from 'sonner';
 
 import { fornecedorSchema, type FornecedorFormValues } from '@/lib/validations';
+import type { Fornecedor } from '@/types/fornecedor';
 import { formatCnpj } from '@/utils/cnpj';
 import { formatPhone } from '@/utils/phone';
 
@@ -13,10 +15,17 @@ interface ApiResponse {
   error?: string;
 }
 
+interface FornecedorFormProps {
+  fornecedor?: Fornecedor;
+}
+
 const inputClassName =
   'w-full rounded border border-gray-300 px-3 py-2 text-sm focus:border-gray-500 focus:outline-none';
 
-export function FornecedorForm() {
+export function FornecedorForm({ fornecedor }: FornecedorFormProps) {
+  const router = useRouter();
+  const isEditMode = fornecedor !== undefined;
+
   const {
     register,
     handleSubmit,
@@ -24,11 +33,26 @@ export function FornecedorForm() {
     setError,
     reset,
     formState: { errors, isSubmitting },
-  } = useForm<FornecedorFormValues>({ resolver: zodResolver(fornecedorSchema) });
+  } = useForm<FornecedorFormValues>({
+    resolver: zodResolver(fornecedorSchema),
+    defaultValues: fornecedor
+      ? {
+          nomeEmpresa: fornecedor.nomeEmpresa,
+          cnpj: fornecedor.cnpj,
+          endereco: fornecedor.endereco,
+          telefone: fornecedor.telefone,
+          email: fornecedor.email,
+          contatoPrincipal: fornecedor.contatoPrincipal,
+        }
+      : undefined,
+  });
 
   async function onSubmit(data: FornecedorFormValues): Promise<void> {
-    const response = await fetch('/api/fornecedores', {
-      method: 'POST',
+    const endpoint = isEditMode ? `/api/fornecedores/${fornecedor.id}` : '/api/fornecedores';
+    const method = isEditMode ? 'PUT' : 'POST';
+
+    const response = await fetch(endpoint, {
+      method,
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify(data),
     });
@@ -41,12 +65,20 @@ export function FornecedorForm() {
         return;
       }
 
-      toast.error(result.error ?? 'Erro ao cadastrar fornecedor.');
+      toast.error(
+        result.error ?? (isEditMode ? 'Erro ao atualizar fornecedor.' : 'Erro ao cadastrar fornecedor.'),
+      );
       return;
     }
 
-    toast.success('Fornecedor cadastrado com sucesso!');
-    reset();
+    if (isEditMode) {
+      toast.success('Fornecedor atualizado com sucesso!');
+      router.push('/fornecedores');
+      router.refresh();
+    } else {
+      toast.success('Fornecedor cadastrado com sucesso!');
+      reset();
+    }
   }
 
   return (
@@ -163,7 +195,7 @@ export function FornecedorForm() {
         disabled={isSubmitting}
         className="mt-2 rounded bg-gray-900 px-4 py-2 text-sm font-medium text-white disabled:opacity-50"
       >
-        Cadastrar
+        {isEditMode ? 'Salvar Alterações' : 'Cadastrar'}
       </button>
     </form>
   );
