@@ -34,9 +34,11 @@ Permitir que o gerente de compras cadastre, liste, edite e exclua fornecedores n
 ### Listagem (Read)
 
 1. O usuário acessa a página `/fornecedores`, ponto de entrada principal da funcionalidade (linkado na navegação e na página inicial).
-2. A página é um Server Component renderizado dinamicamente (`export const dynamic = 'force-dynamic'`) que busca os dados diretamente do `service` (`listarFornecedores`), sem round-trip pela própria API.
-3. Os fornecedores são exibidos em uma tabela responsiva com Nome da Empresa, Cidade/UF, CNPJ e Telefone formatados (`formatCnpj`/`formatPhone`) e E-mail, com ações de "Editar" e "Excluir" por linha. Caso não haja fornecedores, é exibida a mensagem "Nenhum fornecedor cadastrado."
-4. A rota `GET /api/fornecedores` também está disponível e retorna a mesma lista em JSON, para uso por integrações externas ou chamadas client-side futuras.
+2. A página é um Server Component renderizado dinamicamente (`export const dynamic = 'force-dynamic'`) que busca os dados diretamente do `service` (`listarFornecedoresPaginado`), sem round-trip pela própria API.
+3. A listagem é paginada, com 10 fornecedores por página. A página atual é controlada pelo parâmetro de busca `?page=` na URL (ex.: `/fornecedores?page=2`); valores ausentes, inválidos ou fora do intervalo válido são automaticamente ajustados para a página mais próxima válida (página 1 como mínimo, última página existente como máximo).
+4. Os fornecedores são exibidos em uma tabela responsiva com uma coluna inicial `#` indicando a numeração sequencial do registro (contínua entre páginas — a página 2 inicia em 11, a página 3 em 21, e assim por diante), seguida de Nome da Empresa, Cidade/UF, CNPJ e Telefone formatados (`formatCnpj`/`formatPhone`) e E-mail, com ações de "Editar" e "Excluir" por linha. Caso não haja fornecedores, é exibida a mensagem "Nenhum fornecedor cadastrado."
+5. Abaixo da tabela, um componente de paginação (`Pagination`, reaproveitado também na listagem de produtos) exibe os links "Anterior", "Próxima" e os números das páginas disponíveis, desabilitando visualmente "Anterior" na primeira página e "Próxima" na última.
+6. A rota `GET /api/fornecedores` também está disponível e retorna a lista completa (sem paginação) em JSON, para uso por integrações externas ou chamadas client-side futuras.
 
 ### Edição (Update)
 
@@ -77,7 +79,7 @@ Migrations: `prisma/migrations/20260624210010_create_fornecedores/migration.sql`
 
 ## Possíveis melhorias futuras
 
-- Adicionar paginação e busca/filtro na listagem de fornecedores.
+- Adicionar busca/filtro (por nome, cidade ou CNPJ) na listagem de fornecedores, complementando a paginação já existente.
 - Substituir a exclusão definitiva por soft delete (campo `deletedAt`), preservando o histórico de fornecedores vinculados a pedidos de compra.
 - Substituir a confirmação de exclusão via `window.confirm` por um modal customizado, alinhado ao design visual do projeto.
 - Adicionar busca/autocompletar dos dados da empresa a partir do CNPJ usando uma API externa (ex.: BrasilAPI ou ReceitaWS).

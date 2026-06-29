@@ -13,6 +13,14 @@ export function findAllProdutos(): Promise<Produto[]> {
   return prisma.produto.findMany({ orderBy: { nome: 'asc' } });
 }
 
+export function findProdutosPaginated(skip: number, take: number): Promise<Produto[]> {
+  return prisma.produto.findMany({ orderBy: { nome: 'asc' }, skip, take });
+}
+
+export function countProdutos(): Promise<number> {
+  return prisma.produto.count();
+}
+
 export function findProdutoById(id: number): Promise<Produto | null> {
   return prisma.produto.findUnique({ where: { id } });
 }

@@ -33,9 +33,11 @@ Permitir que o gerente de estoque cadastre, liste, edite e exclua produtos no si
 ### Listagem (Read)
 
 1. O usuário acessa a página `/produtos`, linkada na navegação principal ao lado de Fornecedores.
-2. A página é um Server Component renderizado dinamicamente (`export const dynamic = 'force-dynamic'`) que busca os dados diretamente do `service` (`listarProdutos`), sem round-trip pela própria API.
-3. Os produtos são exibidos em uma tabela responsiva com Nome, Categoria, Código de Barras, Quantidade em Estoque e Data de Validade (formatada em `pt-BR`, ou `-` quando não informada), com ações de "Editar" e "Excluir" por linha. Caso não haja produtos, é exibida a mensagem "Nenhum produto cadastrado."
-4. A rota `GET /api/produtos` também está disponível e retorna a mesma lista em JSON, para uso por integrações externas ou chamadas client-side futuras.
+2. A página é um Server Component renderizado dinamicamente (`export const dynamic = 'force-dynamic'`) que busca os dados diretamente do `service` (`listarProdutosPaginado`), sem round-trip pela própria API.
+3. A listagem é paginada, com 10 produtos por página. A página atual é controlada pelo parâmetro de busca `?page=` na URL (ex.: `/produtos?page=2`); valores ausentes, inválidos ou fora do intervalo válido são automaticamente ajustados para a página mais próxima válida (página 1 como mínimo, última página existente como máximo).
+4. Os produtos são exibidos em uma tabela responsiva com uma coluna inicial `#` indicando a numeração sequencial do registro (contínua entre páginas — a página 2 inicia em 11, a página 3 em 21, e assim por diante), seguida de Nome, Categoria, Código de Barras, Quantidade em Estoque e Data de Validade (formatada em `pt-BR`, ou `-` quando não informada), com ações de "Editar" e "Excluir" por linha. Caso não haja produtos, é exibida a mensagem "Nenhum produto cadastrado."
+5. Abaixo da tabela, um componente de paginação (`Pagination`, reaproveitado também na listagem de fornecedores) exibe os links "Anterior", "Próxima" e os números das páginas disponíveis, desabilitando visualmente "Anterior" na primeira página e "Próxima" na última.
+6. A rota `GET /api/produtos` também está disponível e retorna a lista completa (sem paginação) em JSON, para uso por integrações externas ou chamadas client-side futuras.
 
 ### Edição (Update)
 
@@ -72,7 +74,7 @@ Migration: `prisma/migrations/20260626210758_create_produtos/migration.sql` (cri
 
 ## Possíveis melhorias futuras
 
-- Adicionar paginação e busca/filtro (por nome, categoria ou código de barras) na listagem de produtos.
+- Adicionar busca/filtro (por nome, categoria ou código de barras) na listagem de produtos, complementando a paginação já existente.
 - Substituir a exclusão definitiva por soft delete (campo `deletedAt`), preservando o histórico de produtos vinculados a movimentações de estoque.
 - Migrar o armazenamento da imagem de `base64` no banco para um serviço externo de armazenamento de arquivos (ex.: S3, Cloudinary), reduzindo o tamanho das linhas da tabela e melhorando a performance de leitura.
 - Permitir a leitura do código de barras via câmera/leitor óptico no momento do cadastro.

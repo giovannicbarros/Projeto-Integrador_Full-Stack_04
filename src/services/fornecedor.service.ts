@@ -1,13 +1,16 @@
 import { Prisma } from '@/generated/prisma/client';
 import {
+  countFornecedores,
   createFornecedor,
   deleteFornecedor,
   findAllFornecedores,
   findFornecedorByCnpj,
   findFornecedorById,
+  findFornecedoresPaginated,
   updateFornecedor,
 } from '@/repositories/fornecedor.repository';
 import type { CreateFornecedorDTO, Fornecedor } from '@/types/fornecedor';
+import type { PaginatedResult } from '@/types/pagination';
 
 const CNPJ_UNIQUE_CONSTRAINT_ERROR_CODE = 'P2002';
 
@@ -48,6 +51,27 @@ export async function cadastrarFornecedor(data: CreateFornecedorDTO): Promise<Fo
 
 export function listarFornecedores(): Promise<Fornecedor[]> {
   return findAllFornecedores();
+}
+
+export const FORNECEDORES_PAGE_SIZE = 10;
+
+export async function listarFornecedoresPaginado(
+  page: number,
+): Promise<PaginatedResult<Fornecedor>> {
+  const total = await countFornecedores();
+  const totalPages = Math.max(1, Math.ceil(total / FORNECEDORES_PAGE_SIZE));
+  const paginaAtual = Math.min(Math.max(1, page), totalPages);
+  const skip = (paginaAtual - 1) * FORNECEDORES_PAGE_SIZE;
+
+  const items = await findFornecedoresPaginated(skip, FORNECEDORES_PAGE_SIZE);
+
+  return {
+    items,
+    total,
+    page: paginaAtual,
+    pageSize: FORNECEDORES_PAGE_SIZE,
+    totalPages,
+  };
 }
 
 export async function buscarFornecedorPorId(id: number): Promise<Fornecedor> {

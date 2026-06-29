@@ -13,6 +13,14 @@ export function findAllFornecedores(): Promise<Fornecedor[]> {
   return prisma.fornecedor.findMany({ orderBy: { nomeEmpresa: 'asc' } });
 }
 
+export function findFornecedoresPaginated(skip: number, take: number): Promise<Fornecedor[]> {
+  return prisma.fornecedor.findMany({ orderBy: { nomeEmpresa: 'asc' }, skip, take });
+}
+
+export function countFornecedores(): Promise<number> {
+  return prisma.fornecedor.count();
+}
+
 export function findFornecedorById(id: number): Promise<Fornecedor | null> {
   return prisma.fornecedor.findUnique({ where: { id } });
 }

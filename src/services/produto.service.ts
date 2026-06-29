@@ -1,13 +1,16 @@
 import { Prisma } from '@/generated/prisma/client';
 import {
+  countProdutos,
   createProduto,
   deleteProduto,
   findAllProdutos,
   findProdutoByCodigoBarras,
   findProdutoById,
+  findProdutosPaginated,
   updateProduto,
 } from '@/repositories/produto.repository';
 import type { CreateProdutoDTO, Produto } from '@/types/produto';
+import type { PaginatedResult } from '@/types/pagination';
 
 const CODIGO_BARRAS_UNIQUE_CONSTRAINT_ERROR_CODE = 'P2002';
 
@@ -50,6 +53,25 @@ export async function cadastrarProduto(data: CreateProdutoDTO): Promise<Produto>
 
 export function listarProdutos(): Promise<Produto[]> {
   return findAllProdutos();
+}
+
+export const PRODUTOS_PAGE_SIZE = 10;
+
+export async function listarProdutosPaginado(page: number): Promise<PaginatedResult<Produto>> {
+  const total = await countProdutos();
+  const totalPages = Math.max(1, Math.ceil(total / PRODUTOS_PAGE_SIZE));
+  const paginaAtual = Math.min(Math.max(1, page), totalPages);
+  const skip = (paginaAtual - 1) * PRODUTOS_PAGE_SIZE;
+
+  const items = await findProdutosPaginated(skip, PRODUTOS_PAGE_SIZE);
+
+  return {
+    items,
+    total,
+    page: paginaAtual,
+    pageSize: PRODUTOS_PAGE_SIZE,
+    totalPages,
+  };
 }
 
 export async function buscarProdutoPorId(id: number): Promise<Produto> {
