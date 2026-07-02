@@ -55,6 +55,10 @@ export function listarProdutos(): Promise<Produto[]> {
   return findAllProdutos();
 }
 
+export function contarProdutos(): Promise<number> {
+  return countProdutos();
+}
+
 export const PRODUTOS_PAGE_SIZE = 10;
 
 export async function listarProdutosPaginado(page: number): Promise<PaginatedResult<Produto>> {

@@ -1,12 +1,15 @@
 import { buscarFornecedorPorId } from '@/services/fornecedor.service';
 import { buscarProdutoPorId } from '@/services/produto.service';
 import {
+  countProdutosComFornecedor,
   createAssociacao,
   deleteAssociacao,
   findAssociacao,
   findFornecedoresByProdutoId,
+  findProdutosComFornecedores,
 } from '@/repositories/produto-fornecedor.repository';
 import type { Fornecedor } from '@/types/fornecedor';
+import type { ProdutoComFornecedores } from '@/types/produto';
 
 export class FornecedorJaAssociadoError extends Error {
   constructor() {
@@ -55,4 +58,16 @@ export async function desassociarFornecedorDoProduto(
 
 export function listarFornecedoresDoProduto(produtoId: number): Promise<Fornecedor[]> {
   return findFornecedoresByProdutoId(produtoId);
+}
+
+export const PRODUTOS_DIVULGACAO_LIMIT = 6;
+
+export function contarProdutosComFornecedor(): Promise<number> {
+  return countProdutosComFornecedor();
+}
+
+export function listarProdutosParaDivulgacao(
+  limit: number = PRODUTOS_DIVULGACAO_LIMIT,
+): Promise<ProdutoComFornecedores[]> {
+  return findProdutosComFornecedores(limit);
 }

@@ -1,6 +1,7 @@
 import { prisma } from '@/lib/prisma';
 import type { ProdutoFornecedor } from '@/generated/prisma/client';
 import type { Fornecedor } from '@/types/fornecedor';
+import type { ProdutoComFornecedores } from '@/types/produto';
 
 export function findAssociacao(
   produtoId: number,
@@ -32,4 +33,29 @@ export function findFornecedoresByProdutoId(produtoId: number): Promise<Forneced
     where: { produtos: { some: { produtoId } } },
     orderBy: { nomeEmpresa: 'asc' },
   });
+}
+
+export function countProdutosComFornecedor(): Promise<number> {
+  return prisma.produto.count({ where: { fornecedores: { some: {} } } });
+}
+
+export function findProdutosComFornecedores(limit: number): Promise<ProdutoComFornecedores[]> {
+  return prisma.produto
+    .findMany({
+      where: { fornecedores: { some: {} } },
+      orderBy: { updatedAt: 'desc' },
+      take: limit,
+      include: {
+        fornecedores: {
+          include: { fornecedor: true },
+          orderBy: { fornecedor: { nomeEmpresa: 'asc' } },
+        },
+      },
+    })
+    .then((produtos) =>
+      produtos.map((produto) => ({
+        ...produto,
+        fornecedores: produto.fornecedores.map((pf) => pf.fornecedor),
+      })),
+    );
 }

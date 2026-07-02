@@ -53,6 +53,10 @@ export function listarFornecedores(): Promise<Fornecedor[]> {
   return findAllFornecedores();
 }
 
+export function contarFornecedores(): Promise<number> {
+  return countFornecedores();
+}
+
 export const FORNECEDORES_PAGE_SIZE = 10;
 
 export async function listarFornecedoresPaginado(
