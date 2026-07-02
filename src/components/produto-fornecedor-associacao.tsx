@@ -1,9 +1,11 @@
 'use client';
 
+import { Plus } from 'lucide-react';
 import { useRouter } from 'next/navigation';
 import { useState } from 'react';
 import { toast } from 'sonner';
 
+import { Modal } from '@/components/modal';
 import type { Fornecedor } from '@/types/fornecedor';
 import { formatCnpj } from '@/utils/cnpj';
 
@@ -27,6 +29,7 @@ export function ProdutoFornecedorAssociacao({
   fornecedoresAssociados,
 }: ProdutoFornecedorAssociacaoProps) {
   const router = useRouter();
+  const [isModalOpen, setIsModalOpen] = useState(false);
   const [fornecedorSelecionadoId, setFornecedorSelecionadoId] = useState('');
   const [isAssociando, setIsAssociando] = useState(false);
   const [desassociandoId, setDesassociandoId] = useState<number | null>(null);
@@ -54,6 +57,7 @@ export function ProdutoFornecedorAssociacao({
 
     toast.success('Fornecedor associado com sucesso ao produto!');
     setFornecedorSelecionadoId('');
+    setIsModalOpen(false);
     router.refresh();
   }
 
@@ -79,35 +83,18 @@ export function ProdutoFornecedorAssociacao({
   return (
     <div className="flex flex-col gap-6">
       <div>
-        <h2 className="mb-2 text-lg font-semibold">Associação de Fornecedor</h2>
-        <div className="flex gap-3">
-          <select
-            value={fornecedorSelecionadoId}
-            onChange={(event) => setFornecedorSelecionadoId(event.target.value)}
-            className={selectClassName}
-          >
-            <option value="" disabled>
-              Selecione um fornecedor
-            </option>
-            {fornecedoresDisponiveis.map((fornecedor) => (
-              <option key={fornecedor.id} value={fornecedor.id}>
-                {fornecedor.nomeEmpresa}
-              </option>
-            ))}
-          </select>
+        <div className="mb-2 flex items-center justify-between">
+          <h2 className="text-lg font-semibold">Fornecedores Associados</h2>
           <button
             type="button"
-            onClick={handleAssociar}
-            disabled={!fornecedorSelecionadoId || isAssociando}
-            className="shrink-0 rounded bg-gray-900 px-4 py-2 text-sm font-medium text-white transition-colors hover:bg-gray-800 disabled:opacity-50"
+            onClick={() => setIsModalOpen(true)}
+            disabled={fornecedoresDisponiveis.length === 0}
+            className="flex shrink-0 items-center gap-1.5 rounded bg-gray-900 px-4 py-2 text-sm font-medium text-white transition-colors hover:bg-gray-800 disabled:opacity-50"
           >
+            <Plus className="h-4 w-4" />
             Associar Fornecedor
           </button>
         </div>
-      </div>
-
-      <div>
-        <h2 className="mb-2 text-lg font-semibold">Fornecedores Associados</h2>
         {fornecedoresAssociados.length === 0 ? (
           <p className="text-sm text-gray-600">Nenhum fornecedor associado a este produto.</p>
         ) : (
@@ -144,6 +131,33 @@ export function ProdutoFornecedorAssociacao({
           </div>
         )}
       </div>
+
+      <Modal open={isModalOpen} title="Associar Fornecedor" onClose={() => setIsModalOpen(false)}>
+        <div className="flex flex-col gap-3">
+          <select
+            value={fornecedorSelecionadoId}
+            onChange={(event) => setFornecedorSelecionadoId(event.target.value)}
+            className={selectClassName}
+          >
+            <option value="" disabled>
+              Selecione um fornecedor
+            </option>
+            {fornecedoresDisponiveis.map((fornecedor) => (
+              <option key={fornecedor.id} value={fornecedor.id}>
+                {fornecedor.nomeEmpresa}
+              </option>
+            ))}
+          </select>
+          <button
+            type="button"
+            onClick={handleAssociar}
+            disabled={!fornecedorSelecionadoId || isAssociando}
+            className="rounded bg-gray-900 px-4 py-2 text-sm font-medium text-white transition-colors hover:bg-gray-800 disabled:opacity-50"
+          >
+            Associar Fornecedor
+          </button>
+        </div>
+      </Modal>
     </div>
   );
 }
