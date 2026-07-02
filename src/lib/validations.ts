@@ -114,3 +114,7 @@ export const produtoApiSchema = z.object({
     )
     .transform((value) => (value && value.length > 0 ? value : null)),
 });
+
+export const associarFornecedorSchema = z.object({
+  fornecedorId: z.number().int().positive(),
+});

@@ -1,4 +1,4 @@
-import { Pencil } from 'lucide-react';
+import { Pencil, Truck } from 'lucide-react';
 import Link from 'next/link';
 
 import { Pagination } from '@/components/pagination';
@@ -79,6 +79,14 @@ export default async function ProdutosPage({ searchParams }: ProdutosPageProps) 
                     </td>
                     <td className="px-6 py-3 text-right">
                       <div className="flex justify-end gap-4">
+                        <Link
+                          href={`/produtos/${produto.id}/fornecedores`}
+                          aria-label="Fornecedores"
+                          title="Fornecedores"
+                          className="text-gray-600 transition-colors hover:text-gray-900"
+                        >
+                          <Truck className="h-4 w-4" />
+                        </Link>
                         <Link
                           href={`/produtos/${produto.id}/editar`}
                           aria-label="Editar"

@@ -29,6 +29,7 @@ model Fornecedor {
   contatoPrincipal String   @map("contato_principal") @db.VarChar(150)
   createdAt        DateTime @default(now()) @map("created_at")
   updatedAt        DateTime @updatedAt @map("updated_at")
+  produtos         ProdutoFornecedor[]
 
   @@map("fornecedores")
 }
@@ -44,6 +45,18 @@ model Produto {
   imagemBase64      String?   @map("imagem_base64") @db.LongText
   createdAt         DateTime  @default(now()) @map("created_at")
   updatedAt         DateTime  @updatedAt @map("updated_at")
+  fornecedores      ProdutoFornecedor[]
 
   @@map("produtos")
+}
+
+model ProdutoFornecedor {
+  produtoId    Int        @map("produto_id")
+  fornecedorId Int        @map("fornecedor_id")
+  produto      Produto    @relation(fields: [produtoId], references: [id], onDelete: Cascade)
+  fornecedor   Fornecedor @relation(fields: [fornecedorId], references: [id], onDelete: Cascade)
+  createdAt    DateTime   @default(now()) @map("created_at")
+
+  @@id([produtoId, fornecedorId])
+  @@map("produtos_fornecedores")
 }
